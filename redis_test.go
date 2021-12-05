@@ -19,12 +19,15 @@ func TestRedisPrefix(t *testing.T) {
 	assert.NoError(t, err)
 
 	conn := GetSession()
-	set, err := conn.Do("set", "test", "test111")
+	set, err := conn.Set("test", "test111")
 	assert.NoError(t, err)
 	t.Log(set)
-	get, err := conn.Do("get", "test")
+	get, err := conn.Get("test")
 	assert.NoError(t, err)
 	t.Log(get)
+	del, err := conn.Del("test")
+	assert.NoError(t, err)
+	t.Log(del)
 }
 
 func TestRedisNotPrefix(t *testing.T) {
@@ -39,10 +42,13 @@ func TestRedisNotPrefix(t *testing.T) {
 	assert.NoError(t, err)
 
 	conn := GetSession().Whether(true)
-	set, err := conn.Do("set", "test", "test111")
+	set, err := conn.Set("test", "test111")
 	assert.NoError(t, err)
 	t.Log(set)
-	get, err := conn.Do("get", "test")
+	get, err := conn.Get("test")
 	assert.NoError(t, err)
 	t.Log(get)
+	del, err := conn.Del("test")
+	assert.NoError(t, err)
+	t.Log(del)
 }
