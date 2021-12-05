@@ -5,7 +5,11 @@ import (
 )
 
 func (r *Session) Set(key, value string) (bool, error) {
-	return redis.Bool(r.Do(SET, key, value))
+	s, err := redis.String(r.Do(SET, key, value))
+	if err != nil {
+		return false, err
+	}
+	return s == "OK", nil
 }
 
 func (r *Session) Get(key string) (string, error) {
