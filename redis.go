@@ -1,17 +1,16 @@
-package main
-
-import (
-	"github.com/gomodule/redigo/redis"
-)
+package tool
 
 import (
 	"log"
 	"strconv"
 	"time"
+
+	"github.com/gomodule/redigo/redis"
 )
 
 var session *Session
 
+// Config redis 配置
 type Config struct {
 	Host        string
 	Password    string
@@ -42,11 +41,10 @@ func LoadRedisSession(c Config) error {
 
 	session.SetPrefix(c.Prefix)
 
-	if err := session.pool.Get().Err(); err != nil {
-		return err
-	}
+	conn := session.pool.Get()
+	defer conn.Close()
 
-	return nil
+	return conn.Err()
 }
 
 func GetSession() *Session {
@@ -84,8 +82,7 @@ func (r *Session) Do(cmd string, args ...interface{}) (interface{}, error) {
 
 func Close(conn redis.Conn) {
 	func(conn redis.Conn) {
-		err := conn.Close()
-		if err != nil {
+		if err := conn.Close(); err != nil {
 			log.Println("redis conn close failure")
 		}
 	}(conn)
